@@ -23,22 +23,12 @@ https://github.com/Nao-desu/shadowverse-index
 - `#虹卡` 指定卡牌稀有度为传说
 
 ## 插件安装
-1. git clone本插件（注：一定要git clone，不要下载压缩包，另外请确保git环境变量正常）：
+1. git clone本插件：
 
-    在 HoshinoBot\hoshino\modules 目录下使用以下命令拉取本项目
-    ```
-    git clone https://github.com/Nao-desu/shadowverse-index.git
-    ```
+    整个插件丢进插件文件夹里
 2. 安装依赖：
-
-    到HoshinoBot\hoshino\modules\shadowverse-index目录下，管理员方式打开powershell
     ```
-    pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple --user
+    pip install -r requirements.txt
     ```
-3. 在 HoshinoBot\hoshino\config\ `__bot__.py` 文件的 MODULES_ON 加入 'shadowverse-index'
-
-4. 下载图片资源(约4GB)，有两种选择：
-- 启动update.bat，可以自动下载
-- [百度网盘下载](https://pan.baidu.com/s/1L6QglA5ICrte_JzD0ffEVA?pwd=szbb),下载完后将图片解压到shadowverse-index/pic文件夹下,并启动update.bat确认资源完整性
-
-5. 重启hoshino
+3. 下载图片资源(约4GB)，有两种选择：
+    bot打指令：更新影之诗图片
