@@ -31,37 +31,36 @@ def get_info():
      count = 1
      if not os.path.exists(f'pic/'):
           os.mkdir('pic/')
-     with ThreadPoolExecutor(max_workers=1000) as t:
+     with ThreadPoolExecutor(max_workers=len(tw)*2) as t:
           def downpic(i, count):
-               if i["char_type"] == 1:
-                    if not os.path.exists(join(MOUDULE_PATH, f'pic/E_{i["card_id"]}.png')):
-                         print(f'generating {i["card_name"]}-E ({count}/{cardnum})')
-                         card_pic = requests.get(f'{img_url_e}{i["card_id"]}.png')
-                         card_name = requests.get(f'{name_url_tw}{i["card_id"]}.png')
-                         pic = Image.open(BytesIO(card_pic.content))
-                         name = Image.open(BytesIO(card_name.content))
-                         xn, yn = name.size
-                         # 调整文字大小
-                         k = 40 / yn
-                         newsize = (int(xn * k), 40)
-                         move = False
-                         if xn * k >= 300:
-                              k = 340 / xn
-                              newsize = (340, int(yn * k))
-                              move = True
-                         name = name.resize(newsize, resample=Image.LANCZOS)
-                         xn, yn = name.size
-                         if move:
-                              left = int(290 - xn / 2)
-                         else:
-                              left = int(268 - xn / 2)
-                         top = int(95 - yn / 2)
-                         pic.paste(name, (left, top), name)
-                         pic.save(join(MOUDULE_PATH, f'pic/E_{i["card_id"]}.png'), 'PNG')
-                         print(f'saved {i["card_name"]}-E:pic/E_{i["card_id"]}.png({count}/{cardnum})')
+               if not os.path.exists(join(MOUDULE_PATH, f'pic/E_{i["card_id"]}.png')):
+                    print(f'generating {i["card_name"]}-E ({count}/{cardnum})')
+                    card_pic = requests.get(f'{img_url_e}{i["card_id"]}.png')
+                    card_name = requests.get(f'{name_url_tw}{i["card_id"]}.png')
+                    pic = Image.open(BytesIO(card_pic.content))
+                    name = Image.open(BytesIO(card_name.content))
+                    xn, yn = name.size
+                    # 调整文字大小
+                    k = 40 / yn
+                    newsize = (int(xn * k), 40)
+                    move = False
+                    if xn * k >= 300:
+                         k = 340 / xn
+                         newsize = (340, int(yn * k))
+                         move = True
+                    name = name.resize(newsize, resample=Image.LANCZOS)
+                    xn, yn = name.size
+                    if move:
+                         left = int(290 - xn / 2)
                     else:
-                         print(f'{i["card_name"]}-E already exists,pass ({count}/{cardnum})')
+                         left = int(268 - xn / 2)
+                    top = int(95 - yn / 2)
+                    pic.paste(name, (left, top), name)
+                    pic.save(join(MOUDULE_PATH, f'pic/E_{i["card_id"]}.png'), 'PNG')
+                    print(f'saved {i["card_name"]}-E:pic/E_{i["card_id"]}.png({count}/{cardnum})')
                else:
+                    print(f'{i["card_name"]}-E already exists,pass ({count}/{cardnum})')
+               if i["char_type"] == 1:
                     if not os.path.exists(join(MOUDULE_PATH, f'pic/C_{i["card_id"]}.png')):
                          print(f'generating {i["card_name"]}-C ({count}/{cardnum})')
                          if i["card_id"] == 910441030:
@@ -93,7 +92,7 @@ def get_info():
                          pic.save(join(MOUDULE_PATH, f'pic/C_{i["card_id"]}.png'), 'PNG')
                          print(f'saved {i["card_name"]}-C:pic/E_{i["card_id"]}.png({count}/{cardnum})')
                     else:
-                         print(f'{i["card_name"]}-C already exists,pass ({count}/{cardnum})')
+                         print(f'{i["card_name"]}-C already exidsts,pass ({count}/{cardnum})')
           for i in tw:
                t.submit(downpic,i,count)
                count = count+1
