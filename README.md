@@ -1,10 +1,10 @@
-# shadowverse-index
+# zhenxunbot-shadowverse-index
 适用于[hoshino](https://github.com/Ice9Coffee/HoshinoBot)的影之诗卡牌图鉴插件
 > 卡牌信息来自[shadowverse-portal](https://shadowverse-portal.com/?lang=zh-tw)
 > 
 > 环境 Python 3.10.7
 # 做了zhenxunbot的移植
-- v1.0 把源码的get_card改成了异步下载，提高了下载速度 
+- v1.0 把源码的get_card改成了异步下载，提高了下载速度,可以直接执行py文件，也可以在bot中调用
 ## 代码来源
 
 https://github.com/Nao-desu/shadowverse-index
