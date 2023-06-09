@@ -1,7 +1,7 @@
 # shadowverse-index
 适用于[hoshino](https://github.com/Ice9Coffee/HoshinoBot)的影之诗卡牌图鉴插件
 > 卡牌信息来自[shadowverse-portal](https://shadowverse-portal.com/?lang=zh-tw)
-做了zhenxunbot的移植
+# 做了zhenxunbot的移植
 ## 代码来源
 
 https://github.com/Nao-desu/shadowverse-index
