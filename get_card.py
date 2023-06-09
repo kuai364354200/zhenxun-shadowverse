@@ -89,6 +89,7 @@ def get_info():
                               top = int(95 - yn/2)
                               pic.paste(name,(left,top),name)
                               pic.save(join(MOUDULE_PATH,f'pic/E_{i["card_id"]}.png'),'PNG')
+                              print(f'{name}:pic/E_{i["card_id"]}.png')
                          else:
                               print(f'{i["card_name"]}-E already exists,pass ({count}/{cardnum})')
                t.submit(downpic,i,count)
