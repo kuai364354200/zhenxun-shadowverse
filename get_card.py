@@ -31,7 +31,7 @@ def get_info():
      count = 1
      if not os.path.exists(f'pic/'):
           os.mkdir('pic/')
-     with ThreadPoolExecutor(max_workers=len(tw)) as t:
+     with ThreadPoolExecutor(max_workers=1000) as t:
           def downpic(i, count):
                if i["char_type"] == 1:
                     if not os.path.exists(join(MOUDULE_PATH, f'pic/E_{i["card_id"]}.png')):
