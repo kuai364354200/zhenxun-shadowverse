@@ -58,7 +58,7 @@ def get_info():
                          top = int(95 - yn / 2)
                          pic.paste(name, (left, top), name)
                          pic.save(join(MOUDULE_PATH, f'pic/E_{i["card_id"]}.png'), 'PNG')
-                         print(f'saved {i["card_name"]}:pic/E_{i["card_id"]}.png({count}/{cardnum})')
+                         print(f'saved {i["card_name"]}-E:pic/E_{i["card_id"]}.png({count}/{cardnum})')
                     else:
                          print(f'{i["card_name"]}-E already exists,pass ({count}/{cardnum})')
                else:
@@ -91,6 +91,7 @@ def get_info():
                          top = int(95 - yn / 2)
                          pic.paste(name, (left, top), name)
                          pic.save(join(MOUDULE_PATH, f'pic/C_{i["card_id"]}.png'), 'PNG')
+                         print(f'saved {i["card_name"]}-C:pic/E_{i["card_id"]}.png({count}/{cardnum})')
                     else:
                          print(f'{i["card_name"]}-C already exists,pass ({count}/{cardnum})')
           for i in tw:
