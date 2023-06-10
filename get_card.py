@@ -31,12 +31,17 @@ def get_info(proxies=None):
      count = 1
      if not os.path.exists(f'pic/'):
           os.mkdir('pic/')
-     with ThreadPoolExecutor(max_workers=len(tw)*2) as t:
+     with ThreadPoolExecutor(max_workers=cardnum) as t:
           def downpic(i, count,proxies):
-               if not os.path.exists(join(MOUDULE_PATH, f'pic/E_{i["card_id"]}.png')):
-                    print(f'generating {i["card_name"]}-E ({count}/{cardnum})')
-                    card_pic = requests.get(f'{img_url_e}{i["card_id"]}.png',proxies=proxies)
-                    card_name = requests.get(f'{name_url_tw}{i["card_id"]}.png',proxies=proxies)
+               if not os.path.exists(join(MOUDULE_PATH, f'pic/C_{i["card_id"]}.png')):
+                    print(f'generating {i["card_name"]}-C ({count}/{cardnum})')
+                    if i["card_id"] == 910441030:
+                         card_pic = requests.get(f'{img_url_c}{i["card_id"] - 10}.png', proxies=proxies)
+                         # 爆破模式没有进化前卡面，另外两个有，替代一下
+                    else:
+                         card_pic = requests.get(f'{img_url_c}{i["card_id"]}.png', proxies=proxies)
+
+                    card_name = requests.get(f'{name_url_tw}{i["card_id"]}.png', proxies=proxies)
                     pic = Image.open(BytesIO(card_pic.content))
                     name = Image.open(BytesIO(card_name.content))
                     xn, yn = name.size
@@ -56,20 +61,15 @@ def get_info(proxies=None):
                          left = int(268 - xn / 2)
                     top = int(95 - yn / 2)
                     pic.paste(name, (left, top), name)
-                    pic.save(join(MOUDULE_PATH, f'pic/E_{i["card_id"]}.png'), 'PNG')
-                    print(f'saved {i["card_name"]}-E:pic/E_{i["card_id"]}.png({count}/{cardnum})')
+                    pic.save(join(MOUDULE_PATH, f'pic/C_{i["card_id"]}.png'), 'PNG')
+                    print(f'saved {i["card_name"]}-C:pic/E_{i["card_id"]}.png({count}/{cardnum})')
                else:
-                    print(f'{i["card_name"]}-E already exists,pass ({count}/{cardnum})')
+                    print(f'{i["card_name"]}-C already exidsts,pass ({count}/{cardnum})')
                if i["char_type"] == 1:
-                    if not os.path.exists(join(MOUDULE_PATH, f'pic/C_{i["card_id"]}.png')):
-                         print(f'generating {i["card_name"]}-C ({count}/{cardnum})')
-                         if i["card_id"] == 910441030:
-                              card_pic = requests.get(f'{img_url_c}{i["card_id"] - 10}.png',proxies=proxies)
-                              # 爆破模式没有进化前卡面，另外两个有，替代一下
-                         else:
-                              card_pic = requests.get(f'{img_url_c}{i["card_id"]}.png',proxies=proxies)
-
-                         card_name = requests.get(f'{name_url_tw}{i["card_id"]}.png',proxies=proxies)
+                    if not os.path.exists(join(MOUDULE_PATH, f'pic/E_{i["card_id"]}.png')):
+                         print(f'generating {i["card_name"]}-E ({count}/{cardnum})')
+                         card_pic = requests.get(f'{img_url_e}{i["card_id"]}.png', proxies=proxies)
+                         card_name = requests.get(f'{name_url_tw}{i["card_id"]}.png', proxies=proxies)
                          pic = Image.open(BytesIO(card_pic.content))
                          name = Image.open(BytesIO(card_name.content))
                          xn, yn = name.size
@@ -89,16 +89,16 @@ def get_info(proxies=None):
                               left = int(268 - xn / 2)
                          top = int(95 - yn / 2)
                          pic.paste(name, (left, top), name)
-                         pic.save(join(MOUDULE_PATH, f'pic/C_{i["card_id"]}.png'), 'PNG')
-                         print(f'saved {i["card_name"]}-C:pic/E_{i["card_id"]}.png({count}/{cardnum})')
+                         pic.save(join(MOUDULE_PATH, f'pic/E_{i["card_id"]}.png'), 'PNG')
+                         print(f'saved {i["card_name"]}-E:pic/E_{i["card_id"]}.png({count}/{cardnum})')
                     else:
-                         print(f'{i["card_name"]}-C already exidsts,pass ({count}/{cardnum})')
+                         print(f'{i["card_name"]}-E already exists,pass ({count}/{cardnum})')
           for i in tw:
-               t.submit(downpic,i,count)
+               t.submit(downpic,i,count,proxies)
                count = count+1
      print("all finished!")
      return 0
 
 if __name__=='__main__':
-     proxies = {'http':'http://127.0.0.1:7890'}
+     proxies = {'http':'http://127.0.0.1:4780'}
      get_info()
