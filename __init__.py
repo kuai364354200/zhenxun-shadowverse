@@ -10,7 +10,8 @@ from nonebot.adapters.onebot.v11 import (
     Message,
     MessageSegment,
 )
-from PIL import Image, ImageDraw,ImageFont
+from utils.message_builder import image
+from PIL import ImageDraw,ImageFont
 import os,json
 from os.path import join
 import zhconv
@@ -27,7 +28,7 @@ wait to complete
 MOUDULE_PATH = os.path.dirname(__file__)
 svsearch=on_command('影之诗卡牌图鉴',aliases={'sv查卡','svsearch'}, priority=5, block=True)
 svcard=on_command("影之诗卡牌图鉴",aliases={'svcard'}, priority=5, block=True)
-getimage = on_command("更新影之诗图片", priority=5, block=True)
+updateimage = on_command("更新影之诗图片", priority=5, block=True)
 __zx_plugin_name__ = "影之诗"
 __plugin_usage__ = """
 usage：
@@ -257,7 +258,7 @@ async def cardinfo_gen(card):#生成卡牌信息card:dict,直接返回cq码
     img.save(buf, format='JPEG')
     base64_str = f'base64://{base64.b64encode(buf.getvalue()).decode()}'
     img = f'[CQ:image,file={base64_str}]'
-    return img
+    return base64_str
 
 async def selectlist(cards):#生成待选列表图cards:list，直接返回cq码
     img = Image.open(join(MOUDULE_PATH,'bg/bg3.png'))
@@ -289,7 +290,7 @@ async def selectlist(cards):#生成待选列表图cards:list，直接返回cq码
     img.save(buf, format='JPEG')
     base64_str = f'base64://{base64.b64encode(buf.getvalue()).decode()}'
     img = f'[CQ:image,file={base64_str}]'
-    return img
+    return base64_str
 
 async def index_card(cond,words):#通过条件&关键词模糊搜索卡牌,返回cards:list->[{'card':card(dict),'dm':100}]
     cards = []
@@ -342,7 +343,7 @@ async def index_card(cond,words):#通过条件&关键词模糊搜索卡牌,返�
 async def sv_index(event: MessageEvent, arg: Message = CommandArg()):
     words =arg.extract_plain_text().replace(' #','#').replace('#', ' #').strip()
     if words == '':
-        await svcard.finsh('请输入条件&关键词!',at_sender=True)
+        await svcard.send('请输入条件&关键词!',at_sender=True)
     words = zhconv.convert(words,'zh-tw').split(' ')
     cond = []
     for i in words:
@@ -358,17 +359,20 @@ async def sv_index(event: MessageEvent, arg: Message = CommandArg()):
         elif len(cards) == 1:
             card = cards[0]['card']
             img = await cardinfo_gen(card)
+            img = image(img)
             await svcard.send(f'{card["card_name"]}\n匹配度{cards[0]["dm"]}\n{img}',at_sender = True)
             return
         elif len(cards) > 20:
             await svcard.send(f'查询到近似结果{len(cards)}张\n只显示最近似20张\n使用svcard+id可以查看卡牌详细信息',at_sender = True)
             cards_sorted = sorted(cards,key = lambda x : x['dm'],reverse=True)[:20] 
             img = await selectlist(cards_sorted)
+            img = image(img)
             await svcard.send(img)
             return
         if len(cards) > 1:
             cards_sorted = sorted(cards,key = lambda x : x['dm'],reverse=True)
             img = await selectlist(cards_sorted)
+            img = image(img)
             await svcard.send(f'查询到如下{len(cards)}张可能结果\n使用svcard+id可以查看卡牌详细信息',at_sender = True)
             await svcard.send(img)
             return
@@ -380,21 +384,22 @@ async def sv_index(event: MessageEvent, arg: Message = CommandArg()):
 async def sv_card(event: MessageEvent, arg: Message = CommandArg()):
     id = arg.extract_plain_text().strip()
     if not id.isdigit() or not len(id) == 9:
-        await svcard.finish('id应为9位整数',at_sender = True)
+        await svcard.send('id应为9位整数',at_sender = True)
         return
     with open(join(MOUDULE_PATH,'cardinfo_tw.json'), 'r', encoding='UTF-8') as f:
         tw = json.load(f)
     check_card = next((d for d in tw if d["card_id"] == int(id)),None)
     if check_card:
         img = await cardinfo_gen(check_card)
-        await svcard.finish(img)
+        img = image(img)
+        await svcard.send(img)
     else:
-        await svcard.finish(f'没有卡牌对应此id:{id}',at_sender = True)
+        await svcard.send(f'没有卡牌对应此id:{id}',at_sender = True)
 
-@getimage.handle()
+@updateimage.handle()
 async def update_card(event: MessageEvent, arg: Message = CommandArg()):
     try:
         get_info()
-        await svcard.finish('图片更新成功',at_sender = True)
+        await svcard.send('图片更新成功',at_sender = True)
     except:
-        await svcard.finish('图片更新失败',at_sender = True)
+        await svcard.send('图片更新失败',at_sender = True)
