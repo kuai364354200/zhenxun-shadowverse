@@ -4,7 +4,7 @@
 > 
 > 环境 Python 3.10.7
 # 做了zhenxunbot的移植
-- v1.0 把源码的get_card改成了异步下载，提高了下载速度,可以直接执行py文件，也可以在bot中调用
+- v1.0 把源码的get_card改成了异步下载，提高了下载速度,给request添加了代理避免下载卡死
 ## 代码来源
 
 https://github.com/Nao-desu/shadowverse-index
