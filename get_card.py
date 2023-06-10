@@ -5,10 +5,10 @@ from PIL import Image
 from io import BytesIO
 from concurrent.futures import ThreadPoolExecutor
 MOUDULE_PATH = os.path.dirname(__file__)
-def get_info():
+def get_info(proxies=None):
      #获取卡牌信息
      url = 'https://shadowverse-portal.com/api/v1/cards'
-     a = requests.get(url,params={"format":"json","lang":"zh-tw"})
+     a = requests.get(url,params={"format":"json","lang":"zh-tw"},proxies=proxies)
      tw = json.loads(a.text)["data"]["cards"]
      nonamecard = []
      for i in tw:
@@ -32,11 +32,11 @@ def get_info():
      if not os.path.exists(f'pic/'):
           os.mkdir('pic/')
      with ThreadPoolExecutor(max_workers=len(tw)*2) as t:
-          def downpic(i, count):
+          def downpic(i, count,proxies):
                if not os.path.exists(join(MOUDULE_PATH, f'pic/E_{i["card_id"]}.png')):
                     print(f'generating {i["card_name"]}-E ({count}/{cardnum})')
-                    card_pic = requests.get(f'{img_url_e}{i["card_id"]}.png')
-                    card_name = requests.get(f'{name_url_tw}{i["card_id"]}.png')
+                    card_pic = requests.get(f'{img_url_e}{i["card_id"]}.png',proxies=proxies)
+                    card_name = requests.get(f'{name_url_tw}{i["card_id"]}.png',proxies=proxies)
                     pic = Image.open(BytesIO(card_pic.content))
                     name = Image.open(BytesIO(card_name.content))
                     xn, yn = name.size
@@ -64,12 +64,12 @@ def get_info():
                     if not os.path.exists(join(MOUDULE_PATH, f'pic/C_{i["card_id"]}.png')):
                          print(f'generating {i["card_name"]}-C ({count}/{cardnum})')
                          if i["card_id"] == 910441030:
-                              card_pic = requests.get(f'{img_url_c}{i["card_id"] - 10}.png')
+                              card_pic = requests.get(f'{img_url_c}{i["card_id"] - 10}.png',proxies=proxies)
                               # 爆破模式没有进化前卡面，另外两个有，替代一下
                          else:
-                              card_pic = requests.get(f'{img_url_c}{i["card_id"]}.png')
+                              card_pic = requests.get(f'{img_url_c}{i["card_id"]}.png',proxies=proxies)
 
-                         card_name = requests.get(f'{name_url_tw}{i["card_id"]}.png')
+                         card_name = requests.get(f'{name_url_tw}{i["card_id"]}.png',proxies=proxies)
                          pic = Image.open(BytesIO(card_pic.content))
                          name = Image.open(BytesIO(card_name.content))
                          xn, yn = name.size
@@ -100,4 +100,5 @@ def get_info():
      return 0
 
 if __name__=='__main__':
+     proxies = {'http':'http://127.0.0.1:7890'}
      get_info()
