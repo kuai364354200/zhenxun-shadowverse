@@ -31,10 +31,9 @@ def get_info(proxies=None):
      count = 1
      if not os.path.exists(f'pic/'):
           os.mkdir('pic/')
-     with ThreadPoolExecutor(max_workers=cardnum) as t:
+     with ThreadPoolExecutor(max_workers=100) as t:
           def downpic(i, count,proxies):
                if not os.path.exists(join(MOUDULE_PATH, f'pic/C_{i["card_id"]}.png')):
-                    print(f'generating {i["card_name"]}-C ({count}/{cardnum})')
                     if i["card_id"] == 910441030:
                          card_pic = requests.get(f'{img_url_c}{i["card_id"] - 10}.png', proxies=proxies)
                          # 爆破模式没有进化前卡面，另外两个有，替代一下
@@ -42,6 +41,7 @@ def get_info(proxies=None):
                          card_pic = requests.get(f'{img_url_c}{i["card_id"]}.png', proxies=proxies)
 
                     card_name = requests.get(f'{name_url_tw}{i["card_id"]}.png', proxies=proxies)
+                    print(f'generating {i["card_name"]}-C ({count}/{cardnum})')
                     pic = Image.open(BytesIO(card_pic.content))
                     name = Image.open(BytesIO(card_name.content))
                     xn, yn = name.size
@@ -67,9 +67,9 @@ def get_info(proxies=None):
                     print(f'{i["card_name"]}-C already exidsts,pass ({count}/{cardnum})')
                if i["char_type"] == 1:
                     if not os.path.exists(join(MOUDULE_PATH, f'pic/E_{i["card_id"]}.png')):
-                         print(f'generating {i["card_name"]}-E ({count}/{cardnum})')
                          card_pic = requests.get(f'{img_url_e}{i["card_id"]}.png', proxies=proxies)
                          card_name = requests.get(f'{name_url_tw}{i["card_id"]}.png', proxies=proxies)
+                         print(f'generating {i["card_name"]}-E ({count}/{cardnum})')
                          pic = Image.open(BytesIO(card_pic.content))
                          name = Image.open(BytesIO(card_name.content))
                          xn, yn = name.size
