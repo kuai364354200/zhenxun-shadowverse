@@ -101,4 +101,4 @@ def get_info(proxies=None):
 
 if __name__=='__main__':
      proxies = {'http':'http://127.0.0.1:4780'}
-     get_info()
+     get_info(proxies=proxies)

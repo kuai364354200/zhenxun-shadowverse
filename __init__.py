@@ -22,11 +22,11 @@ import re
 from fuzzywuzzy import fuzz
 import traceback
 from .get_card import *
-sv_help = '''
-wait to complete
-'''
+
+proxies = {'http':'http://127.0.0.1:4780'}
 MOUDULE_PATH = os.path.dirname(__file__)
-svsearch=on_command('影之诗卡牌图鉴',aliases={'sv查卡','svsearch'}, priority=5, block=True)
+#指令
+svsearch=on_command('影之诗查卡',aliases={'sv查卡','svsearch'}, priority=5, block=True)
 svcard=on_command("影之诗卡牌图鉴",aliases={'svcard'}, priority=5, block=True)
 updateimage = on_command("更新影之诗图片", priority=5, block=True)
 __zx_plugin_name__ = "影之诗"
@@ -341,9 +341,9 @@ async def index_card(cond,words):#通过条件&关键词模糊搜索卡牌,返�
 
 @svsearch.handle()
 async def sv_index(event: MessageEvent, arg: Message = CommandArg()):
-    words =arg.extract_plain_text().replace(' #','#').replace('#', ' #').strip()
+    words =arg.extract_plain_text().strip()
     if words == '':
-        await svcard.send('请输入条件&关键词!',at_sender=True)
+        await svsearch.send('请输入条件&关键词!',at_sender=True)
     words = zhconv.convert(words,'zh-tw').split(' ')
     cond = []
     for i in words:
@@ -354,31 +354,31 @@ async def sv_index(event: MessageEvent, arg: Message = CommandArg()):
     cards = await index_card(cond,words)
     try:
         if len(cards) == 0:
-            await svcard.send('抱歉,未查询到符合条件的卡牌',at_sender = True)
+            await svsearch.finish('抱歉,未查询到符合条件的卡牌',at_sender=True)
             return 
         elif len(cards) == 1:
             card = cards[0]['card']
             img = await cardinfo_gen(card)
             img = image(img)
-            await svcard.send(f'{card["card_name"]}\n匹配度{cards[0]["dm"]}\n{img}',at_sender = True)
+            await svsearch.send(f'{card["card_name"]}\n匹配度{cards[0]["dm"]}\n{img}',at_sender=True)
             return
         elif len(cards) > 20:
-            await svcard.send(f'查询到近似结果{len(cards)}张\n只显示最近似20张\n使用svcard+id可以查看卡牌详细信息',at_sender = True)
+            await svsearch.send(f'查询到近似结果{len(cards)}张\n只显示最近似20张\n使用svcard+id可以查看卡牌详细信息',at_sender=True)
             cards_sorted = sorted(cards,key = lambda x : x['dm'],reverse=True)[:20] 
             img = await selectlist(cards_sorted)
             img = image(img)
-            await svcard.send(img)
+            await svsearch.send(img)
             return
         if len(cards) > 1:
             cards_sorted = sorted(cards,key = lambda x : x['dm'],reverse=True)
             img = await selectlist(cards_sorted)
             img = image(img)
-            await svcard.send(f'查询到如下{len(cards)}张可能结果\n使用svcard+id可以查看卡牌详细信息',at_sender = True)
-            await svcard.send(img)
+            await svsearch.send(f'查询到如下{len(cards)}张可能结果\n使用svcard+id可以查看卡牌详细信息',at_sender = True)
+            await svsearch.send(img)
             return
-    except Exception as e:
+    except ActionFailed:
         exstr = traceback.format_exc()
-        await svcard.send(f'查询失败，{str(exstr)}')
+        await svsearch.send(f'查询失败，{str(exstr)}，账号可能被风控')
 
 @svcard.handle()
 async def sv_card(event: MessageEvent, arg: Message = CommandArg()):
@@ -399,7 +399,7 @@ async def sv_card(event: MessageEvent, arg: Message = CommandArg()):
 @updateimage.handle()
 async def update_card(event: MessageEvent, arg: Message = CommandArg()):
     try:
-        get_info()
-        await svcard.send('图片更新成功',at_sender = True)
-    except:
-        await svcard.send('图片更新失败',at_sender = True)
+        get_info(proxies=proxies)
+        await updateimage.send(f'图片更新成功',at_sender=True)
+    except ActionFailed:
+        await updateimage.send(f'图片更新失败,账号可能被风控',at_sender=True)
