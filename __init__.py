@@ -35,14 +35,14 @@ usage：
     svcard id 查询对应id的卡牌信息
     sv查卡 #条件 关键词 查询卡牌信息，条件前要加#号进行区分,支持多条件,但是要在每个条件前都加#,关键词在卡牌名称与卡牌技能中匹配
     支持的条件有:
-    #3c 指定费用为3
-    #AOA 指定卡包为遥久学园，也可用文字或文字简写
-    #皇家 指定职业为皇家
-    #学园 指定种类为学院
-    #随从 指定为随从卡
-    #atk3 指定攻击力为3
-    #life3 指定生命值为3
-    #虹卡 指定卡牌稀有度为传说
+    3c 指定费用为3
+    AOA 指定卡包为遥久学园，也可用文字或文字简写
+    皇家 指定职业为皇家
+    学园 指定种类为学院
+    随从 指定为随从卡
+    atk3 指定攻击力为3
+    life3 指定生命值为3
+    虹卡 指定卡牌稀有度为传说
 """.strip()
 __plugin_cd_limit__ = {
     "cd": 10,
@@ -347,10 +347,7 @@ async def sv_index(event: MessageEvent, arg: Message = CommandArg()):
     words = zhconv.convert(words,'zh-tw').split(' ')
     cond = []
     for i in words:
-        if i[0] == '#':
-            cond.append(i[1:])
-    for i in cond:
-        words.remove('#'+i)
+        cond.append(i)
     cards = await index_card(cond,words)
     try:
         if len(cards) == 0:
