@@ -11,14 +11,14 @@ from nonebot.adapters.onebot.v11 import (
     MessageSegment,
 )
 from utils.message_builder import image
-from PIL import ImageDraw,ImageFont
+import re,base64
+from pyzbar.pyzbar import decode
+from PIL import Image, ImageDraw,ImageFont
 import os,json
 from os.path import join
 import zhconv
 from textwrap import fill
 from io import BytesIO
-import base64
-import re
 from fuzzywuzzy import fuzz
 import traceback
 from .get_card import *
